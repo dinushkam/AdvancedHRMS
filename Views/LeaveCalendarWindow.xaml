@@ -1,0 +1,28 @@
+﻿<Window x:Class="AdvancedHRMS.Views.LeaveCalendarWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Leave Calendar" Height="600" Width="800">
+    <Grid>
+        <Calendar x:Name="mainCalendar" 
+                 DisplayMode="Month"
+                 DisplayDate="{Binding CurrentDate}"
+                 SelectionMode="SingleRange">
+            <Calendar.CalendarDayButtonStyle>
+                <Style TargetType="CalendarDayButton">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="CalendarDayButton">
+                                <Grid>
+                                    <Rectangle Fill="{TemplateBinding Background}"/>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding DataContext.LeaveStatus, RelativeSource={RelativeSource TemplatedParent}}"
+                                              VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="8"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Calendar.CalendarDayButtonStyle>
+        </Calendar>
+    </Grid>
+</Window>

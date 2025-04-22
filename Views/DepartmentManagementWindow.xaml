@@ -1,0 +1,72 @@
+﻿<Window x:Class="AdvancedHRMS.Views.DepartmentManagementWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Department Management" Height="500" Width="800"
+        Style="{StaticResource StandardWindow}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" 
+                Padding="15" CornerRadius="0">
+            <TextBlock Text="Department Management" 
+                       Foreground="White" 
+                       FontSize="20" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"/>
+        </Border>
+
+        <!-- Main Content -->
+        <Border Grid.Row="1" Margin="15" CornerRadius="4"
+                Background="White" BorderBrush="#e0e0e0" BorderThickness="1">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <DataGrid Name="DepartmentDataGrid" 
+                          AutoGenerateColumns="False"
+                          Grid.Row="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Department ID" Binding="{Binding DepartmentId}" Width="Auto"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Employee Count" Binding="{Binding Employees.Count}" Width="Auto"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" 
+                            HorizontalAlignment="Center" 
+                            Margin="0,15,0,0">
+                    <Button Content="Add Department" 
+                            Style="{StaticResource PrimaryButton}"
+                            Width="150" Margin="5,0"
+                            Click="AddDepartment_Click"/>
+
+                    <Button Content="Edit Department" 
+                             Style="{StaticResource SecondaryButton}"
+                            Width="150" Margin="5,0"
+                            Click="EditDepartment_Click"/>
+
+                    <Button Content="Delete Department" 
+                            Width="150" Margin="5,0"
+                            Style="{StaticResource DangerButton}"
+                            Click="DeleteDepartment_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="{StaticResource DarkBrush}" 
+                Padding="10" CornerRadius="0">
+            <TextBlock Text="© 2025 Advanced HRMS" 
+                       Foreground="White" 
+                       HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+</Window>

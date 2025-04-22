@@ -1,0 +1,63 @@
+﻿<Window x:Class="AdvancedHRMS.Views.LeaveApprovalWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Leave Approvals" Height="600" Width="900"
+        Background="#F8F9FA" WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <!-- Header -->
+        <Border Background="#0078D7" Padding="15" CornerRadius="10,10,0,0">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Leave Approvals" FontSize="22" FontWeight="Bold" 
+                           Foreground="White" HorizontalAlignment="Center"/>
+                <TextBlock Text="Manage and approve employee leave requests" FontSize="14" 
+                           Foreground="White" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <Border Background="White" Margin="10,50,10,50" CornerRadius="8">
+            <DataGrid x:Name="dgLeaveRequests" AutoGenerateColumns="False" Margin="-132,10,-105,-47"
+                      Background="White" AlternatingRowBackground="#F2F2F2"
+                      BorderBrush="LightGray" BorderThickness="1">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Employee" Binding="{Binding Employee.FullName}" Width="*"/>
+                    <DataGridTextColumn Header="Leave Type" Binding="{Binding LeaveType}" Width="120"/>
+                    <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate, StringFormat=d}" Width="100"/>
+                    <DataGridTextColumn Header="End Date" Binding="{Binding EndDate, StringFormat=d}" Width="100"/>
+                    <DataGridTextColumn Header="Days" Binding="{Binding Days}" Width="60"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                    <DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="200"/>
+
+                    <DataGridTemplateColumn Header="Action" Width="160">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="Approve" Width="70" Margin="2" 
+                                            Style="{StaticResource PrimaryButton}" 
+                                            Click="Approve_Click"/>
+                                    <Button Content="Reject" Width="70" Margin="2" 
+                                            Style="{StaticResource DangerButton}" 
+                                            Click="Reject_Click"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Footer -->
+        <Border Background="#F1F1F1" Padding="10" VerticalAlignment="Bottom" CornerRadius="0,0,10,10">
+            <Grid>
+                <TextBlock x:Name="txtTotalRequests" Text="Total Requests: 0" FontSize="14" 
+                           VerticalAlignment="Center" Margin="10,0,0,0"/>
+
+                <Button Content="Close" Width="100" Height="35" 
+                        HorizontalAlignment="Right" Margin="0,0,10,0"
+                        Style="{StaticResource SecondaryButton}" 
+                        Click="Close_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

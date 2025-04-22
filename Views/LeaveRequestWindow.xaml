@@ -1,0 +1,46 @@
+﻿<Window x:Class="AdvancedHRMS.Views.LeaveRequestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Request Leave" Height="450" Width="600">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Leave Type -->
+        <ComboBox x:Name="cmbLeaveType" Grid.Row="0" Margin="0,0,0,10"
+                  SelectedIndex="0">
+            <ComboBoxItem>Sick Leave</ComboBoxItem>
+            <ComboBoxItem>Vacation</ComboBoxItem>
+            <ComboBoxItem>Personal Leave</ComboBoxItem>
+        </ComboBox>
+
+        <!-- Start Date -->
+        <DatePicker x:Name="dpStartDate" Grid.Row="1" Margin="0,0,0,10"
+                   SelectedDate="{Binding StartDate}"/>
+
+        <!-- End Date -->
+        <DatePicker x:Name="dpEndDate" Grid.Row="2" Margin="0,0,0,10"
+                   SelectedDate="{Binding EndDate}"/>
+
+        <!-- Reason -->
+        <TextBox x:Name="txtReason" Grid.Row="3" Margin="0,0,0,10"
+                Height="100" TextWrapping="Wrap" AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"/>
+
+        <!-- Remaining Leave Days -->
+        <TextBlock Grid.Row="4" Text="{Binding RemainingLeaveDays, StringFormat='Remaining Leave Days: {0}'}"/>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Submit" Width="80" Margin="0,0,10,0" Click="Submit_Click"/>
+            <Button Content="Cancel" Width="80" Click="Cancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

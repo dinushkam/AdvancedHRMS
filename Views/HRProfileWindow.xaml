@@ -1,0 +1,24 @@
+﻿<Window x:Class="AdvancedHRMS.Views.HRProfileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="HR Profile" Height="450" Width="350">
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="HR Profile" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
+
+            <TextBlock Text="Full Name:"/>
+            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Email:"/>
+            <TextBox Text="{Binding Email}" IsReadOnly="True"/>
+
+            <TextBlock Text="Phone:"/>
+            <TextBox Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Department:"/>
+            <TextBox Text="{Binding Department, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Button Content="Update Profile" Click="UpdateProfile_Click" Margin="0,10,0,0"/>
+        </StackPanel>
+    </Grid>
+</Window>

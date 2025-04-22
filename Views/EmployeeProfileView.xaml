@@ -1,0 +1,72 @@
+﻿<Window x:Class="AdvancedHRMS.Views.EmployeeProfileView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:AdvancedHRMS.Views"
+        mc:Ignorable="d"
+        Title="Employee Profile" Height="500" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <!-- Update the Details section in EmployeeProfileView.xaml -->
+    <StackPanel Grid.Column="1">
+        <TextBlock Text="{Binding FullName}" 
+               FontSize="20" 
+               FontWeight="Bold"
+               Margin="0,0,0,10"/>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Row 1 -->
+            <TextBlock Text="Employee ID:" Grid.Row="0" Grid.Column="0"/>
+            <TextBlock Text="{Binding EmployeeId}" Grid.Row="0" Grid.Column="1"/>
+
+            <!-- Row 2 -->
+            <TextBlock Text="Position:" Grid.Row="1" Grid.Column="0"/>
+            <TextBlock Text="{Binding Position}" Grid.Row="1" Grid.Column="1"/>
+
+            <!-- Row 3 -->
+            <TextBlock Text="Department:" Grid.Row="2" Grid.Column="0"/>
+            <TextBlock Text="{Binding Department}" Grid.Row="2" Grid.Column="1"/>
+
+            <!-- Row 4 -->
+            <TextBlock Text="Email:" Grid.Row="3" Grid.Column="0"/>
+            <TextBlock Text="{Binding Email}" Grid.Row="3" Grid.Column="1"/>
+
+            <!-- Row 5 -->
+            <TextBlock Text="Phone:" Grid.Row="4" Grid.Column="0"/>
+            <TextBlock Text="{Binding Phone}" Grid.Row="4" Grid.Column="1"/>
+
+            <!-- Row 6 -->
+            <TextBlock Text="Address:" Grid.Row="5" Grid.Column="0"/>
+            <TextBlock Text="{Binding Address}" Grid.Row="5" Grid.Column="1" TextWrapping="Wrap"/>
+
+            <!-- Row 7 -->
+            <TextBlock Text="Date Joined:" Grid.Row="6" Grid.Column="0"/>
+            <TextBlock Text="{Binding DateOfJoining, StringFormat={}{0:dd MMM yyyy}}" Grid.Row="6" Grid.Column="1"/>
+
+            <!-- Row 8 -->
+            <TextBlock Text="Salary:" Grid.Row="7" Grid.Column="0"/>
+            <TextBlock Text="{Binding Salary, StringFormat=C}" Grid.Row="7" Grid.Column="1"/>
+        </Grid>
+
+        <Button Content="Edit Profile" 
+            Width="120" 
+            HorizontalAlignment="Left"
+            Margin="0,20,0,0"
+            Click="EditProfile_Click"/>
+    </StackPanel>
+</Window>

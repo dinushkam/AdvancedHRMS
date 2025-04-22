@@ -1,0 +1,172 @@
+﻿<Window x:Class="AdvancedHRMS.Views.HRDashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="HR Dashboard" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource StandardWindow}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header -->
+            <RowDefinition Height="*"/>
+            <!-- Main Content -->
+            <RowDefinition Height="Auto"/>
+            <!-- Footer -->
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" Padding="15">
+            <DockPanel>
+                <TextBlock Text="HR Dashboard" 
+                           Foreground="White"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           DockPanel.Dock="Left"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding CurrentUser.Username, StringFormat='Welcome, {0}', FallbackValue='Welcome, User'}"
+               Foreground="White"
+               Margin="0,0,15,0"/>
+                    <TextBlock Text="{Binding CurrentUser.Role, FallbackValue='Role: Manager'}"
+               Foreground="White"/>
+                </StackPanel>
+                
+                
+            </DockPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <TabControl Grid.Row="1" Margin="10">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="HeaderTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" 
+                                           FontWeight="Bold"
+                                           Padding="10,5"/>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- Employee Management Tab -->
+            <TabItem Header="Employee Management">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Quick Actions -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                        <Button Content="View All Employees" 
+                                Style="{StaticResource PrimaryButton}"
+                                Click="ViewEmployees_Click"
+                                Width="180"
+                                Margin="5"/>
+
+                       
+
+                        <Button Content="Manage Benefits" 
+                                Style="{StaticResource PrimaryButton}"
+                                Click="ManageBenefits_Click"
+                                Width="180"
+                                Margin="5"/>
+
+                        <Button Content="Manage Leave Requests" 
+         Style="{StaticResource PrimaryButton}"
+         Click="ManageLeaveRequests_Click"
+         Margin="5"
+         Padding="10,5"
+         HorizontalAlignment="Left"/>
+                    </StackPanel>
+
+                    <!-- HR Tools -->
+                    <StackPanel Grid.Row="1" VerticalAlignment="Top">
+                       
+
+                        
+
+                        <!-- Add this to your HRDashboard.xaml inside the TabControl -->
+                        <TabItem Header="My Profile">
+                            <ScrollViewer>
+                                <StackPanel Margin="20">
+                                    <Border Background="White" CornerRadius="5" Padding="15">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Profile Picture -->
+                                            <Border Grid.Column="0" Grid.RowSpan="5" Width="120" Height="150" 
+                            Background="LightGray" CornerRadius="5" Margin="0,0,20,0">
+                                                <!-- Image placeholder -->
+                                            </Border>
+
+                                            <!-- Profile Details -->
+                                            <TextBlock Text="Full Name:" Grid.Row="0" Grid.Column="1" Style="{StaticResource HProfileLabell}"/>
+                                            <TextBlock Text="{Binding CurrentUser.Username}" Grid.Row="0" Grid.Column="1" 
+                               Style="{StaticResource HProfileValuee}" Margin="100,0,0,0"/>
+
+                                            <TextBlock Text="Email:" Grid.Row="1" Grid.Column="1" Style="{StaticResource HProfileLabell}"/>
+                                            <TextBlock Text="{Binding CurrentUser.Email}" Grid.Row="1" Grid.Column="1" 
+                               Style="{StaticResource HProfileValuee}" Margin="100,0,0,0"/>
+
+                                            <TextBlock Text="Phone:" Grid.Row="2" Grid.Column="1" Style="{StaticResource HProfileLabell}"/>
+                                            <TextBlock Text="{Binding CurrentUser.Phone}" Grid.Row="2" Grid.Column="1" 
+                               Style="{StaticResource HProfileValuee}" Margin="100,0,0,0"/>
+
+                                            <TextBlock Text="Department:" Grid.Row="3" Grid.Column="1" Style="{StaticResource HProfileLabell}"/>
+                                            <TextBlock Text="{Binding CurrentUser.Department}" Grid.Row="3" Grid.Column="1" 
+                               Style="{StaticResource HProfileValuee}" Margin="100,0,0,0"/>
+
+                                            <Button Content="Edit Profile" Grid.Row="4" Grid.Column="1" 
+                            Style="{StaticResource PrimaryButton}"
+                            HorizontalAlignment="Left" Margin="100,10,0,0"
+                            Click="ViewEditProfile_Click"/>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- Reports Tab -->
+            <TabItem Header="Reports">
+                <Border Margin="5" Padding="5" Background="White" CornerRadius="5">
+                    <DataGrid Name="ReportsDataGrid" 
+                              AutoGenerateColumns="True"
+                            />
+                </Border>
+            </TabItem>
+        </TabControl>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="{StaticResource DarkBrush}" Padding="10">
+            <DockPanel>
+                <TextBlock Text="© 2023 Advanced HRMS" 
+                           Foreground="White"
+                           DockPanel.Dock="Left"/>
+
+                <Button Content="Logout" 
+         Style="{StaticResource FooterButton}"
+         Click="Logout_Click"
+          Margin="420,0,0,0"
+         DockPanel.Dock="Right"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

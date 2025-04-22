@@ -1,0 +1,107 @@
+﻿<Window x:Class="AdvancedHRMS.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="HRMS Login" 
+        Height="550" 
+        Width="450"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource StandardWindow}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource PrimaryBrush}" 
+                Padding="15"
+                CornerRadius="0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <!--  <Image 
+                       Height="40" 
+                       Margin="0,0,10,0"
+                       Stretch="Uniform"/> -->
+                <TextBlock Text="HR Management System" 
+                           Foreground="White"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <Border Grid.Row="1" 
+                Style="{StaticResource Card}"
+                Width="380"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+            <StackPanel Margin="25">
+                <TextBlock Text="Welcome Back" 
+                           Style="{StaticResource Heading1}"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Sign in to your account"
+                           Foreground="{StaticResource TextLightBrush}"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,25"/>
+
+                <!-- Username -->
+                <TextBlock Text="Username" 
+                           Style="{StaticResource FormLabel}"/>
+                <TextBox x:Name="txtUsername" 
+                         Style="{StaticResource FormTextBox}" TextChanged="txtUsername_TextChanged"/>
+
+                <!-- Password -->
+                <TextBlock Text="Password" 
+                           Style="{StaticResource FormLabel}"
+                           Margin="0,15,0,0"/>
+                <PasswordBox x:Name="txtPassword" 
+                             Style="{StaticResource FormPasswordBox}"/>
+
+                <!-- Error Message -->
+                <TextBlock x:Name="txtError" 
+                           Style="{StaticResource ErrorMessage}"
+                           Visibility="Collapsed"/>
+
+                <!-- Login Button -->
+                <Button Content="Login" 
+                        Style="{StaticResource PrimaryButton}"
+                        Margin="0,25,0,15"
+                        Height="45"
+                        Click="BtnLogin_Click"/>
+
+                <!-- Links -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock>
+                        <Hyperlink Name="SignUpLink" 
+                                  Click="BtnSignup_Click"
+                                  Style="{StaticResource LinkStyle}">
+                            Create Account
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock Text=" • " Margin="5,0"/>
+                    <TextBlock>
+                        <Hyperlink Name="ForgotPasswordLink" 
+                                  Click="ForgotPassword_Click"
+                                  Style="{StaticResource LinkStyle}">
+                            Forgot Password?
+                        </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" 
+                Background="{StaticResource DarkBrush}" 
+                Padding="10"
+                CornerRadius="0">
+            <TextBlock Text="© 2025 Advanced HRMS | Secure Login Portal"
+                       Foreground="White"
+                       HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+</Window>
