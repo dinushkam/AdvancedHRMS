@@ -48,7 +48,8 @@ namespace AdvancedHRMS.Views
                     .Include(a => a.Employee)
                     .Where(a => (!startDate.HasValue || a.Date >= startDate) &&
                                 (!endDate.HasValue || a.Date <= endDate) &&
-                                (string.IsNullOrEmpty(departmentFilter) || a.Employee.Department == departmentFilter))
+                                (string.IsNullOrEmpty(departmentFilter) || a.Employee.Department != null && a.Employee.Department.Name == departmentFilter
+))
                     .Select(a => new
                     {
                         a.EmployeeId,
@@ -68,7 +69,8 @@ namespace AdvancedHRMS.Views
                     .Include(p => p.Employee)
                     .Where(p => (!startDate.HasValue || p.PaymentDate >= startDate) &&
                                 (!endDate.HasValue || p.PaymentDate <= endDate) &&
-                                (string.IsNullOrEmpty(departmentFilter) || p.Employee.Department == departmentFilter))
+                                (string.IsNullOrEmpty(departmentFilter) || p.Employee.Department != null && p.Employee.Department.Name == departmentFilter
+))
                     .Select(p => new
                     {
                         p.EmployeeId,
@@ -89,7 +91,8 @@ namespace AdvancedHRMS.Views
                 var data = _context.Employees
                     .Include(e => e.LeaveRequests)
                     .Include(e => e.Attendances)
-                    .Where(e => string.IsNullOrEmpty(departmentFilter) || e.Department == departmentFilter)
+                    .Where(e => string.IsNullOrEmpty(departmentFilter) ||e.Department != null && e.Department.Name == departmentFilter
+)
                     .Select(e => new
                     {
                         e.EmployeeId,
@@ -159,7 +162,7 @@ namespace AdvancedHRMS.Views
                     foreach (var prop in props)
                     {
                         string value = prop.GetValue(item)?.ToString();
-                        gfx.DrawString(value, font, XBrushes.Black, new XRect(colX, y, 100, page.Height), XStringFormats.TopLeft);
+                        
                         colX += 100;
                     }
                     y += 20;

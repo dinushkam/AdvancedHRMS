@@ -38,7 +38,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding DepartmentId}" Width="Auto"/>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                    <DataGridTextColumn Header="Employees" Binding="{Binding Employees.Count}"/>
+                    <DataGridTextColumn Header="Employees" Binding="{Binding EmployeesCount}"/>
                 </DataGrid.Columns>
             </DataGrid>
 

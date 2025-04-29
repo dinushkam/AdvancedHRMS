@@ -20,8 +20,13 @@ namespace AdvancedHRMS.Views
 
         private void LoadDepartments()
         {
-            DepartmentGrid.ItemsSource = _context.Departments.Include(d => d.Employees).ToList();
+            var departments = _context.Departments
+                .Include(d => d.Employees)
+                .ToList();
+
+            DepartmentGrid.ItemsSource = departments;
         }
+
 
         private void DepartmentGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {

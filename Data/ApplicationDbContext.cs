@@ -40,6 +40,9 @@ namespace AdvancedHRMS.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            base.OnModelCreating(modelBuilder);
+
             // Configure relationships
             modelBuilder.Entity<LeaveRequest>()
                 .HasOne(lr => lr.Employee)
@@ -53,7 +56,14 @@ namespace AdvancedHRMS.Data
                 .HasForeignKey(lr => lr.ProcessedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
-          
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.Department)
+       .WithMany(d => d.Employees)
+       .HasForeignKey(e => e.DepartmentId)
+       .OnDelete(DeleteBehavior.SetNull);
+
+
+
 
 
 

@@ -65,7 +65,9 @@ namespace AdvancedHRMS.Views
                                 FullName = user.Username,
                                 Email = user.Email,
                                 Phone = "N/A",
-                                Department = "Not Assigned",
+                                DepartmentId = _context.Departments
+    .FirstOrDefault(d => d.Name == "Not Assigned")?.DepartmentId ?? 0,
+
                                 DateOfJoining = DateTime.Now,
                                 Salary = 50000
                             };

@@ -1,6 +1,7 @@
 ﻿using AdvancedHRMS.Data;
 using AdvancedHRMS.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,11 +40,12 @@ namespace AdvancedHRMS.Views
 
                 // Get unique departments from actual employees
                 _departments = _allEmployees
-                    .Select(e => e.Department)
-                    .Where(d => !string.IsNullOrEmpty(d))
-                    .Distinct()
-                    .OrderBy(d => d)
-                    .ToList();
+     .Where(e => e.Department != null)
+     .Select(e => e.Department.Name)
+     .Distinct()
+     .OrderBy(d => d)
+     .ToList();
+
 
                 // Get unique positions from actual employees
                 _positions = _allEmployees
@@ -96,7 +98,8 @@ namespace AdvancedHRMS.Views
             // Apply department filter (skip if "All Departments" is selected)
             if (DepartmentFilter.SelectedIndex > 0)
             {
-                filtered = filtered.Where(e => e.Department == DepartmentFilter.SelectedItem.ToString());
+                filtered = filtered.Where(e => e.Department != null && e.Department.Name == DepartmentFilter.SelectedItem.ToString());
+
             }
 
             // Apply position filter (skip if "All Positions" is selected)
