@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace AdvancedHRMS.Models
 {
-    public class Employee 
+    public class Employee
     {
         [Key]
         public int EmployeeId { get; set; }
@@ -24,11 +24,20 @@ namespace AdvancedHRMS.Models
         [Required]
         public string Department { get; set; }
 
+
+
+
+
+
+
         public string Position { get; set; } = "Employee";
         public string Address { get; set; }
 
         [NotMapped]
         public string FullAddress => $"{Address}";
+
+        public virtual ICollection<Attendance> Attendances { get; set; }
+
 
 
 
@@ -39,7 +48,7 @@ namespace AdvancedHRMS.Models
         public decimal Salary { get; set; }
         public int TotalLeaveDays { get; set; } = 21;
 
-       // public bool IsApproved { get; set; } = false;
+        // public bool IsApproved { get; set; } = false;
 
         public virtual ICollection<LeaveRequest> LeaveRequests { get; set; }
 

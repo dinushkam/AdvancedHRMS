@@ -21,10 +21,12 @@
             <Color x:Key="LightColor">#FFFFFF</Color>
             <Color x:Key="TextDarkColor">#333333</Color>
             <Color x:Key="ErrorColor">#e74c3c</Color>
+            <Color x:Key="BorderColor">#BDC3C7</Color>
+            <Color x:Key="LightGrayColor">#ECF0F1</Color>
 
             <!-- Add these to your existing App.xaml resources -->
 
-            <!-- Card Style -->
+           
 
             <!-- Text Styles -->
             <Style x:Key="HProfileLabell" TargetType="TextBlock">
@@ -53,6 +55,7 @@
             <SolidColorBrush x:Key="CardBrush" Color="{StaticResource CardColor}"/>
             <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}"/>
             <SolidColorBrush x:Key="TextLightBrush" Color="{StaticResource TextLightColor}"/>
+            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
 
             <SolidColorBrush x:Key="DarkBrush" Color="{StaticResource DarkColor}"/>
 
@@ -358,6 +361,39 @@
             <Style x:Key="ProfileValue" TargetType="TextBlock">
                 <Setter Property="Margin" Value="0,0,0,10"/>
             </Style>
+
+            <Style x:Key="PrintStyle" TargetType="Control">
+                <Setter Property="FontFamily" Value="Arial"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Margin" Value="5"/>
+            </Style>
+
+          
+                <!-- Search TextBox Style -->
+                <Style x:Key="SearchTextBoxStyle" TargetType="TextBox">
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                </Style>
+
+                <!-- Filter ComboBox Style -->
+                <Style x:Key="FilterComboBoxStyle" TargetType="ComboBox">
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="FontSize" Value="14"/>
+                </Style>
+
+                <!-- Clear Button Style -->
+                <Style x:Key="ClearFilterButtonStyle" TargetType="Button">
+                    <Setter Property="Background" Value="#EEEEEE"/>
+                    <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Foreground" Value="#333333"/>
+                </Style>
+           
 
 
 

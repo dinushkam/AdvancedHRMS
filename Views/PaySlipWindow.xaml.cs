@@ -1,5 +1,8 @@
 ﻿using AdvancedHRMS.Models;
+using iTextSharp.text.pdf;
+using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -59,9 +62,65 @@ namespace AdvancedHRMS.Views
 
         private void Print_Click(object sender, RoutedEventArgs e)
         {
-            // Implement printing functionality
-            MessageBox.Show("Print functionality would be implemented here", "Info",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            try
+            {
+                // Create a print dialog
+                PrintDialog printDialog = new PrintDialog();
+                if (printDialog.ShowDialog() == true)
+                {
+                    // Temporarily resize for printing
+                    PrintArea.Measure(new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight));
+                    PrintArea.Arrange(new Rect(new Point(0, 0), PrintArea.DesiredSize));
+
+                    // Print the visual
+                    printDialog.PrintVisual(PrintArea, "Employee Payslip");
+
+                    // Show success message
+                    MessageBox.Show("Payslip printed successfully!", "Success",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to print payslip: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void GeneratePdf_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "PDF files (*.pdf)|*.pdf",
+                    FileName = $"Payslip_{TxtEmployeeId.Text}_{DateTime.Now:yyyyMMdd}.pdf"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Create PDF document
+                    using (var document = new iTextSharp.text.Document())
+                    {
+                        PdfWriter.GetInstance(document, new FileStream(saveFileDialog.FileName, FileMode.Create));
+                        document.Open();
+
+                        // Add payslip content to PDF
+                        document.Add(new iTextSharp.text.Paragraph("EMPLOYEE PAYSLIP"));
+                        document.Add(new iTextSharp.text.Paragraph($"Employee ID: {TxtEmployeeId.Text}"));
+                        document.Add(new iTextSharp.text.Paragraph($"Employee Name: {TxtEmployeeName.Text}"));
+                        // Add all other fields...
+
+                        MessageBox.Show("PDF generated successfully!", "Success",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to generate PDF: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void CloseWindow_Click(object sender, RoutedEventArgs e)

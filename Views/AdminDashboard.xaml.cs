@@ -156,6 +156,9 @@ namespace AdvancedHRMS.Views
         private void BtnPayroll_Click(object sender, RoutedEventArgs e)
             => OpenChildWindow(new PayrollWindow());
 
+        private void ViewReports_Click(object sender, RoutedEventArgs e)
+           => OpenChildWindow(new ReportingWindow());
+
         private void BtnAdminProfile_Click(object sender, RoutedEventArgs e)
             => new AdminProfileWindow() { Owner = this }.ShowDialog();
 
@@ -171,5 +174,7 @@ namespace AdvancedHRMS.Views
             new LoginWindow().Show();
             this.Close();
         }
+
+       
     }
 }

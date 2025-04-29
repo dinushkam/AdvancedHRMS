@@ -6,7 +6,7 @@
         Width="450"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
-    <Grid Margin="10">
+    <Grid x:Name="PrintArea" Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -92,6 +92,7 @@
         <!-- Footer -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="Print" Width="100" Height="30" Margin="5" Click="Print_Click"/>
+            <Button Content="PDF" Width="100" Height="30" Margin="5" Click="GeneratePdf_Click"/>
             <Button Content="Close" Width="100" Height="30" Margin="5" Click="CloseWindow_Click"/>
         </StackPanel>
     </Grid>

@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace AdvancedHRMS.Views
 {
@@ -58,45 +57,14 @@ namespace AdvancedHRMS.Views
                     return;
                 }
 
-               
                 InitializeComponent();
                 DataContext = this;
                 LoadEmployeeData();
-
-                // Ensure window visibility
-                this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                this.Show();
-
-               
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to initialize dashboard: {ex.Message}");
                 Application.Current.Shutdown();
-            }
-        }
-
-        private void RefreshLeaveRequests()
-        {
-            try
-            {
-                using (var context = new ApplicationDbContext())
-                {
-                    var employee = context.Employees
-                        .Include(e => e.LeaveRequests)
-                        .FirstOrDefault(e => e.EmployeeId == Employee.EmployeeId);
-
-                    if (employee != null)
-                    {
-                        Employee.LeaveRequests = employee.LeaveRequests;
-                        dgMyLeaveRequests.ItemsSource = null;
-                        dgMyLeaveRequests.ItemsSource = Employee.LeaveRequests;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to refresh leave requests: {ex.Message}");
             }
         }
 
@@ -106,7 +74,6 @@ namespace AdvancedHRMS.Views
             {
                 using (var context = new ApplicationDbContext())
                 {
-                    // Ensure EmployeeId is correctly set in the User table
                     if (AuthService.CurrentUser.EmployeeId.HasValue)
                     {
                         Employee = context.Employees
@@ -115,7 +82,6 @@ namespace AdvancedHRMS.Views
                     }
                     else
                     {
-                        // Fallback: Match by email if EmployeeId is missing
                         Employee = context.Employees
                             .Include(e => e.LeaveRequests)
                             .FirstOrDefault(e => e.Email == AuthService.CurrentUser.Email);
@@ -126,44 +92,43 @@ namespace AdvancedHRMS.Views
                         MessageBox.Show("Employee record not found. Contact HR.");
                         return;
                     }
-
-                    // Update UI bindings
-                    DataContext = this; // Ensure DataContext is set
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading data: {ex.Message}");
             }
-            Debug.WriteLine($"Employee loaded: {Employee?.FullName ?? "NULL"}");
-        }
-       
-        // Navigation Methods
-        private void NavigateToProfile(object sender, RoutedEventArgs e)
-        {
-            ProfileTab.IsSelected = true;
         }
 
-        private void NavigateToAttendance(object sender, RoutedEventArgs e)
+        private void Profile_Click(object sender, RoutedEventArgs e)
         {
-            AttendanceTab.IsSelected = true;
+            // Already showing profile info in main view
         }
 
-        private void NavigateToLeave(object sender, RoutedEventArgs e)
+        private void Attendance_Click(object sender, RoutedEventArgs e)
         {
-            LeaveTab.IsSelected = true;
+            var attendanceWindow = new AttendanceWindow(Employee);
+            attendanceWindow.Owner = this;
+            attendanceWindow.ShowDialog();
         }
 
-        private void NavigateToDocuments(object sender, RoutedEventArgs e)
+        private void LeaveRequests_Click(object sender, RoutedEventArgs e)
         {
-            DocumentsTab.IsSelected = true;
+            var leaveWindow = new LeaveRequestWindow(Employee);
+            leaveWindow.Owner = this;
+            leaveWindow.ShowDialog();
+        }
+
+        private void Documents_Click(object sender, RoutedEventArgs e)
+        {
+            var documentsWindow = new EmployeeDocumentsView();
+           
         }
 
         private void EditProfile_Click(object sender, RoutedEventArgs e)
         {
             using (var context = new ApplicationDbContext())
             {
-                // Get fresh employee data from database
                 var dbEmployee = context.Employees
                     .FirstOrDefault(e => e.EmployeeId == Employee.EmployeeId);
 
@@ -175,7 +140,6 @@ namespace AdvancedHRMS.Views
                 {
                     try
                     {
-                        // Update the database entity with edited values
                         dbEmployee.FullName = editWindow.Employee.FullName;
                         dbEmployee.Email = editWindow.Employee.Email;
                         dbEmployee.Phone = editWindow.Employee.Phone;
@@ -186,7 +150,6 @@ namespace AdvancedHRMS.Views
 
                         context.SaveChanges();
 
-                        // Update the local employee object
                         Employee.FullName = dbEmployee.FullName;
                         Employee.Email = dbEmployee.Email;
                         Employee.Phone = dbEmployee.Phone;
@@ -195,9 +158,7 @@ namespace AdvancedHRMS.Views
                         Employee.Address = dbEmployee.Address;
                         Employee.Salary = dbEmployee.Salary;
 
-                        // Force UI refresh
-                        DataContext = null;
-                        DataContext = this;
+                        OnPropertyChanged(nameof(Employee));
                     }
                     catch (Exception ex)
                     {
@@ -208,38 +169,10 @@ namespace AdvancedHRMS.Views
             }
         }
 
-        private void CheckIn_Click(object sender, RoutedEventArgs e)
-        {
-            _isCheckedIn = true;
-            AttendanceStatus.Text = $"Checked in at {DateTime.Now.ToString("hh:mm tt")}";
-            CheckInButton.IsEnabled = false;
-            CheckOutButton.IsEnabled = true;
-        }
-
-        private void CheckOut_Click(object sender, RoutedEventArgs e)
-        {
-            _isCheckedIn = false;
-            AttendanceStatus.Text += $"\nChecked out at {DateTime.Now.ToString("hh:mm tt")}";
-            CheckOutButton.IsEnabled = false;
-            CheckInButton.IsEnabled = true;
-        }
-
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-
             new LoginWindow().Show();
-            this.Close(); 
-        }
-
-        private void RequestLeave_Click(object sender, RoutedEventArgs e)
-        {
-            var leaveWindow = new LeaveRequestWindow(Employee);
-            leaveWindow.Owner = this;
-
-            if (leaveWindow.ShowDialog() == true)
-            {
-                RefreshLeaveRequests();
-            }
+            this.Close();
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

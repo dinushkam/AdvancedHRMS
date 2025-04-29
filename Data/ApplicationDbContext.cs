@@ -21,8 +21,13 @@ namespace AdvancedHRMS.Data
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<Payrolls> Payrolls { get; set; } = null!;
 
+        public DbSet<Attendance> Attendances { get; set; }
+
+
         public object PayrollPeriods { get; internal set; }
         public object PayrollRecords { get; internal set; }
+
+       
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

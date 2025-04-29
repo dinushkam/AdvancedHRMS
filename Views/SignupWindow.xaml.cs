@@ -121,6 +121,15 @@ namespace AdvancedHRMS.Views
             // Basic phone number validation
             return Regex.IsMatch(phone, @"^[0-9\-\+\(\)\s]{10,20}$");
         }
+         private void BtnBackToLogin_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.Owner != null)
+            {
+                this.Owner.Show();  // ✅ Re-show original login window
+            }
+            this.Close();
+        }
 
+       
     }
 }

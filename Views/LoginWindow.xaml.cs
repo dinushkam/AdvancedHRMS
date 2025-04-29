@@ -53,6 +53,11 @@ namespace AdvancedHRMS.Views
                 // ✅ Set the logged-in user
                 AuthService.CurrentUser = user;
 
+
+                AuthService.CurrentUserEmail = user.Email;
+
+
+
                 // ✅ Ensure only one dashboard opens
                 Window dashboard = null;
 
@@ -91,18 +96,19 @@ namespace AdvancedHRMS.Views
         {
             var signupWindow = new SignupWindow();
             signupWindow.Owner = this;
-            this.Hide();
-            signupWindow.Closed += (s, args) => this.Close();
-            signupWindow.Show();
+            this.Hide(); 
+            signupWindow.ShowDialog();
+            this.Show(); 
         }
+
 
         private void ForgotPassword_Click(object sender, RoutedEventArgs e)
         {
             var resetWindow = new PasswordResetWindow();
             resetWindow.Owner = this;
             this.Hide();
-            resetWindow.Closed += (s, args) => this.Close();
-            resetWindow.Show();
+            resetWindow.ShowDialog(); ;
+            this.Show();
         }
 
        
