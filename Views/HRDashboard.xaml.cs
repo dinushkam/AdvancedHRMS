@@ -76,7 +76,7 @@ namespace AdvancedHRMS.Views
             var departmentWindow= new DepartmentManagementWindow();
             departmentWindow.ShowDialog();
         }
-
+        
         private void EditProfile_Click(object sender, RoutedEventArgs e)
         {
             var editWindow = new EditHRProfileWindow(CurrentUser.Email);
