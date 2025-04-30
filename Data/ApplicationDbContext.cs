@@ -58,9 +58,9 @@ namespace AdvancedHRMS.Data
 
             modelBuilder.Entity<Employee>()
                 .HasOne(e => e.Department)
-       .WithMany(d => d.Employees)
-       .HasForeignKey(e => e.DepartmentId)
-       .OnDelete(DeleteBehavior.SetNull);
+                .WithMany(d => d.Employees)
+                .HasForeignKey(e => e.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull);
 
 
 

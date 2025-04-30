@@ -16,7 +16,7 @@ namespace AdvancedHRMS.Views
         private List<Employee> _allEmployees;
         private List<string> _departments = new List<string>
         {
-            "IT", "Finance"
+            "IT", "Finance", "HR", "Marketing", "Admin"
         };
         private List<string> _positions = new List<string>
         {
