@@ -32,7 +32,6 @@ namespace AdvancedHRMS.Views
                         return;
                     }
 
-                    // Set control values on the UI thread
                     Dispatcher.Invoke(() =>
                     {
                         txtFullName.Text = _adminUser.FullName ?? _adminUser.Username;
@@ -68,7 +67,6 @@ namespace AdvancedHRMS.Views
                         return;
                     }
 
-                    // Update fields
                     admin.FullName = txtFullName.Text.Trim();
                     admin.Username = txtUsername.Text.Trim();
                     admin.Email = txtEmail.Text.Trim();
@@ -107,7 +105,6 @@ namespace AdvancedHRMS.Views
                 return false;
             }
 
-            // Add any other validations you need (phone format, etc.)
 
             return true;
         }

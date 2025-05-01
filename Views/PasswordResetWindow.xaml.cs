@@ -53,10 +53,10 @@ namespace AdvancedHRMS.Views
                         return;
                     }
 
-                    // Hash the new password
+                 
                     string hashedPassword = HashPassword(newPassword);
 
-                    // Update password
+            
                     user.PasswordHash = hashedPassword;
                     context.SaveChanges();
 
@@ -92,7 +92,7 @@ namespace AdvancedHRMS.Views
         {
             if (this.Owner != null)
             {
-                this.Owner.Show();  // ✅ Re-show original login window
+                this.Owner.Show();  
             }
             this.Close();
         }

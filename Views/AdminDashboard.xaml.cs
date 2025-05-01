@@ -56,7 +56,7 @@ namespace AdvancedHRMS.Views
                         MessageBox.Show("User Approved!", "Success",
                             MessageBoxButton.OK, MessageBoxImage.Information);
 
-                        // Create employee record if needed
+                       
                         var employee = _context.Employees.FirstOrDefault(emp => emp.Email == user.Email);
                         if (employee == null)
                         {
@@ -131,7 +131,7 @@ namespace AdvancedHRMS.Views
             window.Owner = this;
             window.Closed += (s, args) => {
                 btnBack.Visibility = Visibility.Collapsed;
-                LoadUsers(); // Refresh data when child window closes
+                LoadUsers(); 
             };
             window.Show();
         }

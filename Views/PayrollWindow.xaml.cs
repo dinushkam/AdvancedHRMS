@@ -27,12 +27,12 @@ namespace AdvancedHRMS.Views
         {
             try
             {
-                // Get payrolls and recalculate each one
+               
                 var payrolls = _context.Payrolls
                     .Include(p => p.Employee)
-                    .AsEnumerable() // Switch to client-side evaluation
+                    .AsEnumerable() 
                     .Select(p => {
-                        p.CalculateNetSalary(); // Force recalculation
+                        p.CalculateNetSalary(); 
                         return p;
                     })
                     .ToList();
