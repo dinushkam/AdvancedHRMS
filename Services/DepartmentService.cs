@@ -62,7 +62,9 @@ namespace AdvancedHRMS.Services
                 {
                     foreach (var employee in existingDept.Employees)
                     {
-                        employee.Department = department.Name;
+                        employee.DepartmentId = department.DepartmentId;
+
+
                     }
                 }
 

@@ -79,7 +79,7 @@ namespace AdvancedHRMS.Views
                     Address = address,
                     PasswordHash = hashedPassword,
                     Role = role,
-                    IsApproved = false  // Requires admin approval
+                    IsApproved = false  
                 };
 
                 context.Users.Add(newUser);
@@ -118,14 +118,14 @@ namespace AdvancedHRMS.Views
 
         private bool IsValidPhone(string phone)
         {
-            // Basic phone number validation
+            
             return Regex.IsMatch(phone, @"^[0-9\-\+\(\)\s]{10,20}$");
         }
          private void BtnBackToLogin_Click(object sender, RoutedEventArgs e)
         {
             if (this.Owner != null)
             {
-                this.Owner.Show();  // ✅ Re-show original login window
+                this.Owner.Show();  
             }
             this.Close();
         }

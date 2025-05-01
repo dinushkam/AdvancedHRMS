@@ -20,8 +20,13 @@ namespace AdvancedHRMS.Views
 
         private void LoadDepartments()
         {
-            DepartmentGrid.ItemsSource = _context.Departments.Include(d => d.Employees).ToList();
+            var departments = _context.Departments
+                .Include(d => d.Employees)
+                .ToList();
+
+            DepartmentGrid.ItemsSource = departments;
         }
+
 
         private void DepartmentGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
@@ -60,16 +65,31 @@ namespace AdvancedHRMS.Views
         {
             if (_selectedDepartment == null)
             {
-                MessageBox.Show("Please select a department first.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please select a department first.", "Warning");
                 return;
             }
 
             var assignWindow = new AssignEmployeesWindow(_selectedDepartment);
             if (assignWindow.ShowDialog() == true)
             {
-                LoadDepartments(); // Refresh after assigning
+                _selectedDepartment = _context.Departments
+     .Include(d => d.Employees)
+     .FirstOrDefault(d => d.DepartmentId == _selectedDepartment.DepartmentId);
+
+                LoadDepartments();
+
+                if (_selectedDepartment != null)
+                {
+                    txtName.Text = _selectedDepartment.Name;
+                    txtBudget.Text = _selectedDepartment.Budget.ToString();
+                    txtDescription.Text = _selectedDepartment.Description;
+                    EmployeeGrid.ItemsSource = _selectedDepartment.Employees.ToList();
+                }
+
             }
         }
+
+
 
 
         protected override void OnClosed(System.EventArgs e)

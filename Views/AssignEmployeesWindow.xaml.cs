@@ -1,5 +1,6 @@
 ﻿using AdvancedHRMS.Data;
 using AdvancedHRMS.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -16,7 +17,13 @@ namespace AdvancedHRMS.Views
         {
             InitializeComponent();
             _context = new ApplicationDbContext();
-            _department = department;
+           
+
+            // With this:
+            _department = _context.Departments
+                .Include(d => d.Employees)
+                .FirstOrDefault(d => d.DepartmentId == department.DepartmentId);
+
             LoadEmployees();
         }
 
@@ -43,21 +50,34 @@ namespace AdvancedHRMS.Views
         {
             var selectedIds = _employees.Where(e => e.IsSelected).Select(e => e.EmployeeId).ToList();
 
-            var selectedEmployees = _context.Employees.Where(e => selectedIds.Contains(e.EmployeeId)).ToList();
+            // Unassign all employees from this department
+            var existingEmployees = _context.Employees
+                .Where(e => e.DepartmentId == _department.DepartmentId)
+                .ToList();
 
-            _department.Employees.Clear(); // Clear previous
-            foreach (var emp in selectedEmployees)
+            foreach (var emp in existingEmployees)
             {
-                _department.Employees.Add(emp);
+                emp.DepartmentId = null;
             }
 
-            _context.Departments.Update(_department);
+            // Assign selected employees to this department
+            var selectedEmployees = _context.Employees
+                .Where(e => selectedIds.Contains(e.EmployeeId))
+                .ToList();
+
+            foreach (var emp in selectedEmployees)
+            {
+                emp.DepartmentId = _department.DepartmentId;
+            }
+
             _context.SaveChanges();
 
             MessageBox.Show("Employees assigned successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             this.DialogResult = true;
             this.Close();
         }
+
+
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {

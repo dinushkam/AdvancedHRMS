@@ -20,9 +20,11 @@ namespace AdvancedHRMS.Models
 
         [Required]
         public string Phone { get; set; }
+        public int? DepartmentId { get; set; }
 
-        [Required]
-        public string Department { get; set; }
+        [ForeignKey("DepartmentId")]
+        public virtual Department Department { get; set; }
+
 
 
 

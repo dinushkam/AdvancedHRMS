@@ -48,7 +48,8 @@ namespace AdvancedHRMS.Views
                     .Include(a => a.Employee)
                     .Where(a => (!startDate.HasValue || a.Date >= startDate) &&
                                 (!endDate.HasValue || a.Date <= endDate) &&
-                                (string.IsNullOrEmpty(departmentFilter) || a.Employee.Department == departmentFilter))
+                                (string.IsNullOrEmpty(departmentFilter) || a.Employee.Department != null && a.Employee.Department.Name == departmentFilter
+))
                     .Select(a => new
                     {
                         a.EmployeeId,
@@ -68,7 +69,8 @@ namespace AdvancedHRMS.Views
                     .Include(p => p.Employee)
                     .Where(p => (!startDate.HasValue || p.PaymentDate >= startDate) &&
                                 (!endDate.HasValue || p.PaymentDate <= endDate) &&
-                                (string.IsNullOrEmpty(departmentFilter) || p.Employee.Department == departmentFilter))
+                                (string.IsNullOrEmpty(departmentFilter) || p.Employee.Department != null && p.Employee.Department.Name == departmentFilter
+))
                     .Select(p => new
                     {
                         p.EmployeeId,
@@ -78,7 +80,8 @@ namespace AdvancedHRMS.Views
                         p.Bonuses,
                         p.Deductions,
                         p.Tax,
-                        p.NetSalary,
+                        NetSalary = p.BasicSalary + p.OvertimePay + p.Allowances + p.Bonuses - (p.Deductions + p.Tax),
+
                         p.PaymentDate
                     }).ToList();
 
@@ -89,7 +92,8 @@ namespace AdvancedHRMS.Views
                 var data = _context.Employees
                     .Include(e => e.LeaveRequests)
                     .Include(e => e.Attendances)
-                    .Where(e => string.IsNullOrEmpty(departmentFilter) || e.Department == departmentFilter)
+                    .Where(e => string.IsNullOrEmpty(departmentFilter) ||e.Department != null && e.Department.Name == departmentFilter
+)
                     .Select(e => new
                     {
                         e.EmployeeId,
@@ -107,76 +111,135 @@ namespace AdvancedHRMS.Views
 
         private void ExportToPdf_Click(object sender, RoutedEventArgs e)
         {
-            if (ReportDataGrid.ItemsSource == null)
+            if (ReportDataGrid.ItemsSource == null || ReportDataGrid.Items.Count == 0)
             {
                 MessageBox.Show("Generate a report first!", "Warning");
                 return;
             }
 
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog
+            var dlg = new Microsoft.Win32.SaveFileDialog
             {
-                FileName = "HR_Report",
+                FileName = "Report",
                 DefaultExt = ".pdf",
                 Filter = "PDF files (*.pdf)|*.pdf"
             };
 
-            if (dlg.ShowDialog() == true)
+            if (dlg.ShowDialog() != true) return;
+
+            var doc = new PdfDocument();
+            var page = doc.AddPage();
+            page.Orientation = PdfSharp.PageOrientation.Landscape;
+            var gfx = XGraphics.FromPdfPage(page);
+
+            var titleFont = new XFont("Verdana", 14, XFontStyleEx.Bold);
+            var headerFont = new XFont("Verdana", 10, XFontStyleEx.Bold);
+            var bodyFont = new XFont("Verdana", 9);
+            var pen = new XPen(XColors.LightGray, 0.75);
+
+            double margin = 40;
+            double y = margin;
+            double spacing = 5;
+
+            // Logo
+            string logoPath = "Assets/logo.png";
+            if (File.Exists(logoPath))
             {
-                var doc = new PdfDocument();
-                var page = doc.AddPage();
-                var gfx = XGraphics.FromPdfPage(page);
-                var font = new XFont("Arial", 10, XFontStyleEx.Regular);
+                XImage logo = XImage.FromFile(logoPath);
 
-                double y = 40;
+                double logoWidth = 100;
+                double logoHeight = 60;
 
-                // Draw logo
-                string logoPath = "Assets/logo.png"; // Ensure this exists
-                if (File.Exists(logoPath))
-                {
-                    XImage logo = XImage.FromFile(logoPath);
-                    gfx.DrawImage(logo, 40, 20, 100, 30);
-                    y += 40;
-                }
+                // Center horizontally
+                double centerX = (page.Width - logoWidth) / 2;
 
-                // Draw headers
-                double colX = 40;
-                foreach (var col in ReportDataGrid.Columns)
-                {
-                    string header = col.Header.ToString();
-                    gfx.DrawString(header, font, XBrushes.Black, new XRect(colX, y, 100, page.Height), XStringFormats.TopLeft);
-                    colX += 100;
-                }
-
-                y += 25;
-
-                // Draw rows
-                foreach (var item in ReportDataGrid.Items)
-                {
-                    if (item == null) continue;
-                    var props = item.GetType().GetProperties();
-
-                    colX = 40;
-                    foreach (var prop in props)
-                    {
-                        string value = prop.GetValue(item)?.ToString();
-                        gfx.DrawString(value, font, XBrushes.Black, new XRect(colX, y, 100, page.Height), XStringFormats.TopLeft);
-                        colX += 100;
-                    }
-                    y += 20;
-
-                    if (y > page.Height - 50)
-                    {
-                        page = doc.AddPage();
-                        gfx = XGraphics.FromPdfPage(page);
-                        y = 40;
-                    }
-                }
-
-                doc.Save(dlg.FileName);
-                MessageBox.Show("Exported to PDF successfully!");
-                Process.Start(new ProcessStartInfo(dlg.FileName) { UseShellExecute = true });
+                gfx.DrawImage(logo, centerX, 20, logoWidth, logoHeight);
+                y += logoHeight + 30;
             }
+
+
+            y += 50;
+
+            // Report title
+            string reportTitle = ((ComboBoxItem)ReportTypeComboBox.SelectedItem)?.Content?.ToString() ?? "HR Report";
+            gfx.DrawString(reportTitle, titleFont, XBrushes.Black, new XRect(0, y, page.Width, 20), XStringFormats.TopCenter);
+            y += 30;
+
+            var columns = ReportDataGrid.Columns;
+            int columnCount = columns.Count;
+
+            double usableWidth = page.Width - (2 * margin);
+            double colWidth = usableWidth / columnCount;
+
+            double rowHeight = 22;
+
+            // Draw header row background
+            gfx.DrawRectangle(XBrushes.LightGray, margin, y, usableWidth, rowHeight);
+
+            // Header values
+            double colX = margin;
+            foreach (var col in columns)
+            {
+                string header = col.Header?.ToString() ?? "";
+                gfx.DrawString(header, headerFont, XBrushes.Black, new XRect(colX + 2, y + 4, colWidth, rowHeight), XStringFormats.TopLeft);
+                colX += colWidth;
+            }
+
+            // Header bottom border
+            gfx.DrawLine(pen, margin, y + rowHeight, page.Width - margin, y + rowHeight);
+            y += rowHeight;
+
+            // Data rows
+            foreach (var item in ReportDataGrid.Items)
+            {
+                if (item == null) continue;
+                var props = item.GetType().GetProperties();
+
+                colX = margin;
+                foreach (var col in columns)
+                {
+                    string binding = col.SortMemberPath;
+                    string value = "";
+
+                    if (!string.IsNullOrEmpty(binding))
+                    {
+                        var prop = props.FirstOrDefault(p => p.Name == binding);
+                        if (prop != null)
+                        {
+                            var val = prop.GetValue(item);
+                            value = val != null ? val.ToString() : "";
+                        }
+                    }
+
+                    gfx.DrawRectangle(XBrushes.White, colX, y, colWidth, rowHeight);
+                    gfx.DrawString(value, bodyFont, XBrushes.Black, new XRect(colX + 2, y + 4, colWidth - 4, rowHeight), XStringFormats.TopLeft);
+                    gfx.DrawLine(pen, colX, y, colX, y + rowHeight); // vertical line
+                    colX += colWidth;
+                }
+
+                gfx.DrawLine(pen, margin, y + rowHeight, page.Width - margin, y + rowHeight); // horizontal row line
+                y += rowHeight;
+
+                if (y > page.Height - 50)
+                {
+                    page = doc.AddPage();
+                    page.Orientation = PdfSharp.PageOrientation.Landscape;
+                    gfx = XGraphics.FromPdfPage(page);
+                    y = margin;
+                }
+            }
+
+            // Footer
+            y = page.Height - 30;
+            gfx.DrawLine(XPens.Black, margin, y - 5, page.Width - margin, y - 5);
+            gfx.DrawString("Generated by Advanced HRMS • " + DateTime.Now.ToString("dd-MMM-yyyy"),
+                bodyFont, XBrushes.Gray, new XRect(0, y, page.Width, 20), XStringFormats.TopCenter);
+
+            doc.Save(dlg.FileName);
+            MessageBox.Show("Exported to PDF successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            Process.Start(new ProcessStartInfo(dlg.FileName) { UseShellExecute = true });
         }
+
+
 
         private void ExportToExcel_Click(object sender, RoutedEventArgs e)
         {
@@ -190,7 +253,7 @@ namespace AdvancedHRMS.Views
 
                 var dlg = new Microsoft.Win32.SaveFileDialog
                 {
-                    FileName = "Report",
+                    FileName = "HR_Report",
                     DefaultExt = ".csv",
                     Filter = "CSV files (*.csv)|*.csv"
                 };
@@ -199,15 +262,24 @@ namespace AdvancedHRMS.Views
                 {
                     using (var sw = new StreamWriter(dlg.FileName))
                     {
-                        // Write header
+                        string reportType = (ReportTypeComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Report";
+                        sw.WriteLine($"Report: {reportType}");
+                        if (StartDatePicker.SelectedDate.HasValue && EndDatePicker.SelectedDate.HasValue)
+                        {
+                            sw.WriteLine($"Date Range: {StartDatePicker.SelectedDate:yyyy-MM-dd} to {EndDatePicker.SelectedDate:yyyy-MM-dd}");
+                        }
+                        sw.WriteLine(); // Empty line
+
+                        // Header
                         sw.WriteLine(string.Join(",", ReportDataGrid.Columns.Select(c => c.Header.ToString())));
 
+                        // Rows
                         foreach (var item in ReportDataGrid.Items)
                         {
                             if (item == null) continue;
                             var row = item.GetType().GetProperties()
-                                          .Select(p => p.GetValue(item)?.ToString())
-                                          .ToArray();
+                                .Select(p => $"\"{p.GetValue(item)?.ToString()?.Replace("\"", "\"\"")}\"")
+                                .ToArray();
                             sw.WriteLine(string.Join(",", row));
                         }
                     }
@@ -220,6 +292,7 @@ namespace AdvancedHRMS.Views
                 MessageBox.Show($"Error: {ex.Message}");
             }
         }
+
 
         protected override void OnClosed(EventArgs e)
         {
