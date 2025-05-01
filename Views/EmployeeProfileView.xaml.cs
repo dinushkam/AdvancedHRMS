@@ -18,7 +18,7 @@ namespace AdvancedHRMS.Views
             _employee = employee ?? throw new ArgumentNullException(nameof(employee));
             _context = new ApplicationDbContext();
 
-            // Load fresh data from DB to avoid stale data
+   
             _employee = _context.Employees
                 .FirstOrDefault(e => e.EmployeeId == _employee.EmployeeId) ?? _employee;
 
@@ -38,7 +38,7 @@ namespace AdvancedHRMS.Views
                 try
                 {
                     var image = new BitmapImage(new Uri(openFileDialog.FileName));
-                    // In a real app, save to database/server
+        
                     MessageBox.Show("Profile picture updated!", "Success",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -54,7 +54,7 @@ namespace AdvancedHRMS.Views
         {
             using (var context = new ApplicationDbContext())
             {
-                // Get fresh employee data from database
+              
                 var dbEmployee = context.Employees
                     .FirstOrDefault(emp => emp.EmployeeId == _employee.EmployeeId);
 
@@ -66,7 +66,7 @@ namespace AdvancedHRMS.Views
                 {
                     try
                     {
-                        // Update the database entity with edited values
+  
                         dbEmployee.FullName = editWindow.Employee.FullName;
                         dbEmployee.Email = editWindow.Employee.Email;
                         dbEmployee.Phone = editWindow.Employee.Phone;
@@ -77,7 +77,7 @@ namespace AdvancedHRMS.Views
 
                         context.SaveChanges();
 
-                        // Update the local employee object
+                  
                         _employee.FullName = dbEmployee.FullName;
                         _employee.Email = dbEmployee.Email;
                         _employee.Phone = dbEmployee.Phone;
@@ -86,7 +86,6 @@ namespace AdvancedHRMS.Views
                         _employee.Address = dbEmployee.Address;
                         _employee.Salary = dbEmployee.Salary;
 
-                        // Force UI refresh
                         DataContext = null;
                         DataContext = _employee;
                     }

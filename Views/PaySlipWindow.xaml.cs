@@ -28,7 +28,7 @@ namespace AdvancedHRMS.Views
 
             try
             {
-                // Recalculate to ensure displayed values are correct
+                
                 payroll.CalculateNetSalary();
 
                 TxtEmployeeId.Text = payroll.EmployeeId.ToString();
@@ -41,7 +41,7 @@ namespace AdvancedHRMS.Views
                 TxtDeductions.Text = payroll.Deductions.ToString("C");
                 TxtNetSalary.Text = payroll.NetSalary.ToString("C");
 
-                // Add verification
+            
                 decimal calculatedNet = payroll.BasicSalary + payroll.OvertimePay +
                                       payroll.Allowances + payroll.Bonuses -
                                       payroll.Deductions - payroll.Tax;
@@ -64,18 +64,17 @@ namespace AdvancedHRMS.Views
         {
             try
             {
-                // Create a print dialog
+                
                 PrintDialog printDialog = new PrintDialog();
                 if (printDialog.ShowDialog() == true)
                 {
-                    // Temporarily resize for printing
+                   
                     PrintArea.Measure(new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight));
                     PrintArea.Arrange(new Rect(new Point(0, 0), PrintArea.DesiredSize));
 
-                    // Print the visual
+                   
                     printDialog.PrintVisual(PrintArea, "Employee Payslip");
 
-                    // Show success message
                     MessageBox.Show("Payslip printed successfully!", "Success",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -99,17 +98,17 @@ namespace AdvancedHRMS.Views
 
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    // Create PDF document
+                    
                     using (var document = new iTextSharp.text.Document())
                     {
                         PdfWriter.GetInstance(document, new FileStream(saveFileDialog.FileName, FileMode.Create));
                         document.Open();
 
-                        // Add payslip content to PDF
+                       
                         document.Add(new iTextSharp.text.Paragraph("EMPLOYEE PAYSLIP"));
                         document.Add(new iTextSharp.text.Paragraph($"Employee ID: {TxtEmployeeId.Text}"));
                         document.Add(new iTextSharp.text.Paragraph($"Employee Name: {TxtEmployeeName.Text}"));
-                        // Add all other fields...
+                        
 
                         MessageBox.Show("PDF generated successfully!", "Success",
                             MessageBoxButton.OK, MessageBoxImage.Information);

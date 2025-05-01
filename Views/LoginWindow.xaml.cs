@@ -12,7 +12,7 @@ namespace AdvancedHRMS.Views
     public partial class LoginWindow : Window
     {
         private readonly ApplicationDbContext _context;
-        public bool ShowAdminLogin { get; set; } = false; // Set to true for admin login option
+        public bool ShowAdminLogin { get; set; } = false; 
 
         public LoginWindow()
         {
@@ -50,7 +50,7 @@ namespace AdvancedHRMS.Views
                     return;
                 }
 
-                // ✅ Set the logged-in user
+              
                 AuthService.CurrentUser = user;
 
 
@@ -58,7 +58,7 @@ namespace AdvancedHRMS.Views
 
 
 
-                // ✅ Ensure only one dashboard opens
+              
                 Window dashboard = null;
 
                 if (user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
@@ -79,10 +79,10 @@ namespace AdvancedHRMS.Views
                     return;
                 }
 
-                dashboard.Title = $"Dashboard: {user.Username}"; // Show user name in the title
+                dashboard.Title = $"Dashboard: {user.Username}"; 
                 dashboard.Show();
 
-                // ✅ Close login window before opening the dashboard
+                
                 this.Close();
             }
             catch (Exception ex)

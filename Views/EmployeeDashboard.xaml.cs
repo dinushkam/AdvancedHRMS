@@ -41,7 +41,7 @@ namespace AdvancedHRMS.Views
         {
             try
             {
-                // Verify user exists
+      
                 if (AuthService.CurrentUser == null)
                 {
                     MessageBox.Show("Session expired. Please login again.");
@@ -49,7 +49,7 @@ namespace AdvancedHRMS.Views
                     return;
                 }
 
-                // Verify role
+         
                 if (!AuthService.CurrentUser.Role.Equals("Employee", StringComparison.OrdinalIgnoreCase))
                 {
                     MessageBox.Show("Access denied. Employee dashboard requires employee role.");
@@ -102,7 +102,7 @@ namespace AdvancedHRMS.Views
 
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
-            // Already showing profile info in main view
+           
         }
 
         private void Attendance_Click(object sender, RoutedEventArgs e)

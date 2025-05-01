@@ -28,7 +28,7 @@ namespace AdvancedHRMS.Services
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
 
-            // Calculate payroll components
+        
             decimal overtimePay = input.OvertimeHours * input.OvertimeRate;
             decimal tax = (input.BasicSalary + overtimePay + input.Allowances) * input.TaxRate;
 
@@ -45,8 +45,8 @@ namespace AdvancedHRMS.Services
                 PaymentDate = DateTime.Now
             };
 
-            // Ensure net salary is calculated
-            payroll.CalculateNetSalary();  // This was missing!
+
+            payroll.CalculateNetSalary();  
 
             _context.Payrolls.Add(payroll);
             _context.SaveChanges();
@@ -72,10 +72,10 @@ namespace AdvancedHRMS.Services
     {
         public decimal BasicSalary { get; set; }
         public int OvertimeHours { get; set; }
-        public decimal OvertimeRate { get; set; } = 500m; // Default rate
+        public decimal OvertimeRate { get; set; } = 500m; 
         public decimal Allowances { get; set; }
         public decimal Deductions { get; set; }
         public decimal Bonuses { get; set; }
-        public decimal TaxRate { get; set; } = 0.15m; // Default 15%
+        public decimal TaxRate { get; set; } = 0.15m; 
     }
 }

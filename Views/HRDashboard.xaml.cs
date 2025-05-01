@@ -48,7 +48,7 @@ namespace AdvancedHRMS.Views
                     return;
                 }
 
-                // Debug output to check if ID exists
+               
                 Debug.WriteLine($"Loaded user ID: {CurrentUser.EmployeeId}");
             }
             catch (Exception ex)
@@ -82,7 +82,7 @@ namespace AdvancedHRMS.Views
             var editWindow = new EditHRProfileWindow(CurrentUser.Email);
             if (editWindow.ShowDialog() == true)
             {
-                LoadCurrentUser(); // Refresh user data
+                LoadCurrentUser(); 
             }
         }
 

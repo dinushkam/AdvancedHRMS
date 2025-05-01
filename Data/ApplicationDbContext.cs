@@ -43,7 +43,6 @@ namespace AdvancedHRMS.Data
 
             base.OnModelCreating(modelBuilder);
 
-            // Configure relationships
             modelBuilder.Entity<LeaveRequest>()
                 .HasOne(lr => lr.Employee)
                 .WithMany(e => e.LeaveRequests)
