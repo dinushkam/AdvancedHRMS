@@ -4,6 +4,7 @@ using AdvancedHRMS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvancedHRMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250428173644_AddAttendanceEmployeeLink")]
+    partial class AddAttendanceEmployeeLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,41 +56,48 @@ namespace AdvancedHRMS.Migrations
                     b.ToTable("Attendances");
                 });
 
-            modelBuilder.Entity("AdvancedHRMS.Models.Department", b =>
+            modelBuilder.Entity("AdvancedHRMS.Models.Benefit", b =>
                 {
-                    b.Property<int>("DepartmentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Budget")
+                    b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Code")
+                    b.Property<string>("BenefitType")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EstablishedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ManagerId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Benefits");
+                });
+
+            modelBuilder.Entity("AdvancedHRMS.Models.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("DepartmentId");
-
-                    b.HasIndex("ManagerId");
+                    b.HasKey("Id");
 
                     b.ToTable("Departments");
                 });
@@ -107,8 +117,9 @@ namespace AdvancedHRMS.Migrations
                     b.Property<DateTime>("DateOfJoining")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
+                    b.Property<string>("Department")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -133,8 +144,6 @@ namespace AdvancedHRMS.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("EmployeeId");
-
-                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Employees");
                 });
@@ -314,23 +323,15 @@ namespace AdvancedHRMS.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("AdvancedHRMS.Models.Department", b =>
+            modelBuilder.Entity("AdvancedHRMS.Models.Benefit", b =>
                 {
-                    b.HasOne("AdvancedHRMS.Models.Employee", "Manager")
+                    b.HasOne("AdvancedHRMS.Models.Employee", "Employee")
                         .WithMany()
-                        .HasForeignKey("ManagerId");
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Manager");
-                });
-
-            modelBuilder.Entity("AdvancedHRMS.Models.Employee", b =>
-                {
-                    b.HasOne("AdvancedHRMS.Models.Department", "Department")
-                        .WithMany("Employees")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Department");
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("AdvancedHRMS.Models.LeaveRequest", b =>
@@ -369,11 +370,6 @@ namespace AdvancedHRMS.Migrations
                         .HasForeignKey("EmployeeId");
 
                     b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("AdvancedHRMS.Models.Department", b =>
-                {
-                    b.Navigation("Employees");
                 });
 
             modelBuilder.Entity("AdvancedHRMS.Models.Employee", b =>

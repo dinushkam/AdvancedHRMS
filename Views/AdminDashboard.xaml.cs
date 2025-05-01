@@ -65,7 +65,9 @@ namespace AdvancedHRMS.Views
                                 FullName = user.Username,
                                 Email = user.Email,
                                 Phone = "N/A",
-                                Department = "Not Assigned",
+                                DepartmentId = _context.Departments
+    .FirstOrDefault(d => d.Name == "Not Assigned")?.DepartmentId ?? 0,
+
                                 DateOfJoining = DateTime.Now,
                                 Salary = 50000
                             };
@@ -156,6 +158,9 @@ namespace AdvancedHRMS.Views
         private void BtnPayroll_Click(object sender, RoutedEventArgs e)
             => OpenChildWindow(new PayrollWindow());
 
+        private void ViewReports_Click(object sender, RoutedEventArgs e)
+           => OpenChildWindow(new ReportingWindow());
+
         private void BtnAdminProfile_Click(object sender, RoutedEventArgs e)
             => new AdminProfileWindow() { Owner = this }.ShowDialog();
 
@@ -171,5 +176,7 @@ namespace AdvancedHRMS.Views
             new LoginWindow().Show();
             this.Close();
         }
+
+       
     }
 }

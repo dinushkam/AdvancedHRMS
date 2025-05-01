@@ -1,8 +1,12 @@
 ﻿using AdvancedHRMS.Data;
 using AdvancedHRMS.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace AdvancedHRMS.Views
 {
@@ -10,6 +14,7 @@ namespace AdvancedHRMS.Views
     {
         private readonly ApplicationDbContext _context;
         private User _currentUser;
+
         public User CurrentUser
         {
             get => _currentUser;
@@ -26,41 +31,66 @@ namespace AdvancedHRMS.Views
         {
             InitializeComponent();
             _context = new ApplicationDbContext();
-            LoadCurrentUser(); // Load user data
-            LoadHRData();
-            this.DataContext = this; // Set DataContext to self
+            LoadCurrentUser();
+            DataContext = this;
         }
-
         private void LoadCurrentUser()
         {
-            // Get current user from your authentication service
-            CurrentUser = _context.Users.FirstOrDefault(u => u.Email == AuthService.CurrentUserEmail);
+            try
+            {
+                CurrentUser = _context.Users
+                    .FirstOrDefault(u => u.Email == AuthService.CurrentUserEmail);
+
+                if (CurrentUser == null)
+                {
+                    MessageBox.Show("User not found in database.", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Debug output to check if ID exists
+                Debug.WriteLine($"Loaded user ID: {CurrentUser.EmployeeId}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading user data: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
+
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        // ... rest of your existing code ...
-
-
-        private void LoadHRData()
-        {
-            // Load HR-specific data
-            ReportsDataGrid.ItemsSource = _context.Employees.ToList();
-        }
-
-        private void ViewEmployees_Click(object sender, RoutedEventArgs e)
+        private void ManageEmployees_Click(object sender, RoutedEventArgs e)
         {
             var empWindow = new EmployeeManagementWindow();
             empWindow.Show();
         }
 
-      
-        private void ManageBenefits_Click(object sender, RoutedEventArgs e)
+        private void ManageDepartments_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Benefits management would go here");
+            var departmentWindow= new DepartmentManagementWindow();
+            departmentWindow.ShowDialog();
+        }
+
+        private void EditProfile_Click(object sender, RoutedEventArgs e)
+        {
+            var editWindow = new EditHRProfileWindow(CurrentUser.Email);
+            if (editWindow.ShowDialog() == true)
+            {
+                LoadCurrentUser(); // Refresh user data
+            }
+        }
+
+        private void ViewReports_Click(object sender, RoutedEventArgs e)
+        {
+            var reportingWindow = new ReportingWindow();
+            reportingWindow.ShowDialog();
+
         }
 
         private void Logout_Click(object sender, RoutedEventArgs e)
@@ -70,11 +100,6 @@ namespace AdvancedHRMS.Views
             this.Close();
         }
 
-        protected override void OnClosed(EventArgs e)
-        {
-            _context.Dispose();
-            base.OnClosed(e);
-        }
         private void ManageLeaveRequests_Click(object sender, RoutedEventArgs e)
         {
             var leaveWindow = new LeaveApprovalWindow();
@@ -82,16 +107,10 @@ namespace AdvancedHRMS.Views
             leaveWindow.ShowDialog();
         }
 
-        private void ViewEditProfile_Click(object sender, RoutedEventArgs e)
+        protected override void OnClosed(EventArgs e)
         {
-            var profileWindow = new HRProfileWindow(AuthService.CurrentUserEmail);
-            if (profileWindow.ShowDialog() == true)
-            {
-                // Refresh the current user data
-                LoadCurrentUser();
-                MessageBox.Show("Profile updated successfully!", "Success",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            _context.Dispose();
+            base.OnClosed(e);
         }
     }
 }

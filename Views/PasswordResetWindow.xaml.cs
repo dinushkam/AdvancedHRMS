@@ -87,5 +87,14 @@ namespace AdvancedHRMS.Views
             txtMessage.Foreground = isSuccess ? System.Windows.Media.Brushes.Green : System.Windows.Media.Brushes.Red;
             txtMessage.Visibility = Visibility.Visible;
         }
+
+        private void BtnBackToLogin_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.Owner != null)
+            {
+                this.Owner.Show();  // ✅ Re-show original login window
+            }
+            this.Close();
+        }
     }
 }

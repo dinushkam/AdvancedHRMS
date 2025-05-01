@@ -21,8 +21,13 @@ namespace AdvancedHRMS.Data
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<Payrolls> Payrolls { get; set; } = null!;
 
+        public DbSet<Attendance> Attendances { get; set; }
+
+
         public object PayrollPeriods { get; internal set; }
         public object PayrollRecords { get; internal set; }
+
+       
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,6 +40,9 @@ namespace AdvancedHRMS.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            base.OnModelCreating(modelBuilder);
+
             // Configure relationships
             modelBuilder.Entity<LeaveRequest>()
                 .HasOne(lr => lr.Employee)
@@ -48,7 +56,14 @@ namespace AdvancedHRMS.Data
                 .HasForeignKey(lr => lr.ProcessedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
-          
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.Department)
+                .WithMany(d => d.Employees)
+                .HasForeignKey(e => e.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+
+
 
 
 

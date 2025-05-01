@@ -1,15 +1,15 @@
 ﻿using AdvancedHRMS.Data;
 using AdvancedHRMS.Models;
-using Microsoft.VisualBasic;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace AdvancedHRMS.Views
 {
     public partial class DepartmentManagementWindow : Window
     {
         private readonly ApplicationDbContext _context;
+        private Department _selectedDepartment;
 
         public DepartmentManagementWindow()
         {
@@ -20,43 +20,82 @@ namespace AdvancedHRMS.Views
 
         private void LoadDepartments()
         {
-            DepartmentDataGrid.ItemsSource = _context.Departments.ToList();
+            var departments = _context.Departments
+                .Include(d => d.Employees)
+                .ToList();
+
+            DepartmentGrid.ItemsSource = departments;
         }
 
-        private void AddDepartment_Click(object sender, RoutedEventArgs e)
+
+        private void DepartmentGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            string deptName = Interaction.InputBox("Enter Department Name:", "Add Department", "");
-            if (!string.IsNullOrWhiteSpace(deptName))
+            _selectedDepartment = DepartmentGrid.SelectedItem as Department;
+
+            if (_selectedDepartment != null)
             {
-                var department = new Department { Name = deptName };
-                _context.Departments.Add(department);
-                _context.SaveChanges();
-                LoadDepartments();
+                txtName.Text = _selectedDepartment.Name;
+                txtBudget.Text = _selectedDepartment.Budget.ToString();
+                txtDescription.Text = _selectedDepartment.Description;
+                EmployeeGrid.ItemsSource = _selectedDepartment.Employees.ToList();
             }
         }
 
-        private void EditDepartment_Click(object sender, RoutedEventArgs e)
+     
+
+        private void SaveChanges_Click(object sender, RoutedEventArgs e)
         {
-            if (DepartmentDataGrid.SelectedItem is Department selectedDept)
+            if (_selectedDepartment == null) return;
+
+            _selectedDepartment.Name = txtName.Text;
+            if (decimal.TryParse(txtBudget.Text, out var budget))
             {
-                string newName = Interaction.InputBox("Edit Department Name:", "Edit Department", selectedDept.Name);
-                if (!string.IsNullOrWhiteSpace(newName))
+                _selectedDepartment.Budget = budget;
+            }
+            _selectedDepartment.Description = txtDescription.Text;
+
+            _context.Departments.Update(_selectedDepartment);
+            _context.SaveChanges();
+            LoadDepartments();
+
+            MessageBox.Show("Department updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void AssignEmployees_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedDepartment == null)
+            {
+                MessageBox.Show("Please select a department first.", "Warning");
+                return;
+            }
+
+            var assignWindow = new AssignEmployeesWindow(_selectedDepartment);
+            if (assignWindow.ShowDialog() == true)
+            {
+                _selectedDepartment = _context.Departments
+     .Include(d => d.Employees)
+     .FirstOrDefault(d => d.DepartmentId == _selectedDepartment.DepartmentId);
+
+                LoadDepartments();
+
+                if (_selectedDepartment != null)
                 {
-                    selectedDept.Name = newName;
-                    _context.SaveChanges();
-                    LoadDepartments();
+                    txtName.Text = _selectedDepartment.Name;
+                    txtBudget.Text = _selectedDepartment.Budget.ToString();
+                    txtDescription.Text = _selectedDepartment.Description;
+                    EmployeeGrid.ItemsSource = _selectedDepartment.Employees.ToList();
                 }
+
             }
         }
 
-        private void DeleteDepartment_Click(object sender, RoutedEventArgs e)
+
+
+
+        protected override void OnClosed(System.EventArgs e)
         {
-            if (DepartmentDataGrid.SelectedItem is Department selectedDept)
-            {
-                _context.Departments.Remove(selectedDept);
-                _context.SaveChanges();
-                LoadDepartments();
-            }
+            _context.Dispose();
+            base.OnClosed(e);
         }
     }
 }

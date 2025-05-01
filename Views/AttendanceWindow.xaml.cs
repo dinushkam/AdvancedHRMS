@@ -1,22 +1,21 @@
 ﻿using AdvancedHRMS.Data;
 using AdvancedHRMS.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace AdvancedHRMS.Views
 {
-    public partial class AttendanceWindow : UserControl
+    public partial class AttendanceWindow : Window
     {
         private readonly ApplicationDbContext _context;
-        private List<AttendanceRecord> _attendanceRecords;
+        private readonly Employee _employee;
 
-        public AttendanceWindow()
+        public AttendanceWindow(Employee employee)
         {
             InitializeComponent();
             _context = new ApplicationDbContext();
+            _employee = employee;
             LoadAttendanceData();
         }
 
@@ -24,82 +23,83 @@ namespace AdvancedHRMS.Views
         {
             try
             {
-                // Get current employee's attendance records
-                var employeeEmail = AuthService.CurrentUser?.Email;
-                if (employeeEmail == null) return;
+                AttendanceGrid.ItemsSource = _context.Attendances
+                    .Where(a => a.EmployeeId == _employee.EmployeeId)
+                    .OrderByDescending(a => a.Date)
+                    .ToList();
 
-                var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeEmail);
-                if (employee == null) return;
+                var today = _context.Attendances
+                    .FirstOrDefault(a => a.EmployeeId == _employee.EmployeeId && a.Date == DateTime.Today);
 
-                // Sample data - replace with actual database records
-                _attendanceRecords = new List<AttendanceRecord>
+                if (today != null)
                 {
-                    new AttendanceRecord
-                    {
-                        Date = DateTime.Today,
-                        CheckInTime = DateTime.Today.AddHours(9),
-                        CheckOutTime = DateTime.Today.AddHours(17),
-                        HoursWorked = "8 hours",
-                        Status = "Completed"
-                    },
-                    new AttendanceRecord
-                    {
-                        Date = DateTime.Today.AddDays(-1),
-                        CheckInTime = DateTime.Today.AddDays(-1).AddHours(9),
-                        CheckOutTime = DateTime.Today.AddDays(-1).AddHours(17.5),
-                        HoursWorked = "8.5 hours",
-                        Status = "Completed"
-                    }
-                };
+                    BtnCheckIn.IsEnabled = today.CheckInTime == null;
+                    BtnCheckOut.IsEnabled = today.CheckInTime != null && today.CheckOutTime == null;
+                }
+                else
+                {
+                    BtnCheckIn.IsEnabled = true;
+                    BtnCheckOut.IsEnabled = false;
+                }
 
-                AttendanceGrid.ItemsSource = _attendanceRecords;
                 UpdateSummary();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading attendance data: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error loading attendance: {ex.Message}");
             }
         }
 
         private void UpdateSummary()
         {
-            // Calculate totals
-            var todayHours = _attendanceRecords
-                .Where(r => r.Date == DateTime.Today)
-                .Sum(r => r.HoursWorked.Contains("hours") ?
-                    double.Parse(r.HoursWorked.Replace(" hours", "")) : 0);
+            var attendances = _context.Attendances
+                .Where(a => a.EmployeeId == _employee.EmployeeId)
+                .ToList();
 
-            var monthHours = _attendanceRecords
+            double todayHours = attendances
+                .Where(r => r.Date.Date == DateTime.Today)
+                .Sum(r => r.HoursWorked);
+
+            double monthHours = attendances
                 .Where(r => r.Date.Month == DateTime.Today.Month && r.Date.Year == DateTime.Today.Year)
-                .Sum(r => r.HoursWorked.Contains("hours") ?
-                    double.Parse(r.HoursWorked.Replace(" hours", "")) : 0);
+                .Sum(r => r.HoursWorked);
 
-            TxtTodayHours.Text = $"{todayHours} hours";
-            TxtMonthHours.Text = $"{monthHours} hours";
+            TxtTodayHours.Text = $"{todayHours:0.0} hours";
+            TxtMonthHours.Text = $"{monthHours:0.0} hours";
         }
 
         private void CheckIn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var checkInTime = DateTime.Now;
-                _attendanceRecords.Add(new AttendanceRecord
-                {
-                    Date = checkInTime.Date,
-                    CheckInTime = checkInTime,
-                    Status = "In Progress"
-                });
+                var today = DateTime.Today;
 
-                AttendanceGrid.Items.Refresh();
-                BtnCheckIn.IsEnabled = false;
-                BtnCheckOut.IsEnabled = true;
-                UpdateSummary();
+                var existing = _context.Attendances
+                    .FirstOrDefault(a => a.EmployeeId == _employee.EmployeeId && a.Date == today);
+
+                if (existing != null)
+                {
+                    MessageBox.Show("Already checked in today!");
+                    return;
+                }
+
+                var newRecord = new Attendance
+                {
+                    EmployeeId = _employee.EmployeeId,
+                    Date = today,
+                    CheckInTime = DateTime.Now,
+                    Status = "In Progress"
+                };
+
+                _context.Attendances.Add(newRecord);
+                _context.SaveChanges();
+
+                LoadAttendanceData();
+                MessageBox.Show("Checked In Successfully!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error checking in: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error during check-in: {ex.Message}");
             }
         }
 
@@ -107,41 +107,35 @@ namespace AdvancedHRMS.Views
         {
             try
             {
-                var checkOutTime = DateTime.Now;
-                var todayRecord = _attendanceRecords.FirstOrDefault(r => r.Date == DateTime.Today && r.CheckOutTime == null);
+                var today = DateTime.Today;
 
-                if (todayRecord != null)
+                var todayRecord = _context.Attendances
+                    .FirstOrDefault(a => a.EmployeeId == _employee.EmployeeId && a.Date == today);
+
+                if (todayRecord == null || todayRecord.CheckInTime == null)
                 {
-                    todayRecord.CheckOutTime = checkOutTime;
-                    var hoursWorked = (checkOutTime - todayRecord.CheckInTime);
-                    todayRecord.HoursWorked = $"{hoursWorked:0.0} hours";
-                    todayRecord.Status = "Completed";
+                    MessageBox.Show("No check-in found for today!");
+                    return;
                 }
 
-                AttendanceGrid.Items.Refresh();
-                BtnCheckIn.IsEnabled = true;
-                BtnCheckOut.IsEnabled = false;
-                UpdateSummary();
+                todayRecord.CheckOutTime = DateTime.Now;
+                todayRecord.Status = "Completed";
+
+                _context.SaveChanges();
+
+                LoadAttendanceData();
+                MessageBox.Show("Checked Out Successfully!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error checking out: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error during check-out: {ex.Message}");
             }
         }
 
-        protected virtual void OnClosed(EventArgs e)
+        protected override void OnClosed(EventArgs e)
         {
             _context?.Dispose();
+            base.OnClosed(e);
         }
-    }
-
-    public class AttendanceRecord
-    {
-        public DateTime Date { get; set; }
-        public DateTime? CheckInTime { get; set; }
-        public DateTime? CheckOutTime { get; set; }
-        public string HoursWorked { get; set; }
-        public string Status { get; set; }
     }
 }
