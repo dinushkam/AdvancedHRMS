@@ -22,7 +22,7 @@ namespace AdvancedHRMS.Views
         {
             using var context = new ApplicationDbContext();
             var leaveRequests = context.LeaveRequests
-                .Include(lr => lr.Employee)  // ✅ This line is key
+                .Include(lr => lr.Employee)  
                 .ToList();
 
             dgLeaveRequests.ItemsSource = leaveRequests;
@@ -61,7 +61,7 @@ namespace AdvancedHRMS.Views
         }
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            this.Close(); // Closes the current Leave Approval Window
+            this.Close();
         }
         protected override void OnClosed(EventArgs e)
         {

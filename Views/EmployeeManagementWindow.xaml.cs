@@ -38,7 +38,7 @@ namespace AdvancedHRMS.Views
                 _allEmployees = _context.Employees.ToList();
                 EmployeeDataGrid.ItemsSource = _allEmployees;
 
-                // Get unique departments from actual employees
+                
                 _departments = _allEmployees
      .Where(e => e.Department != null)
      .Select(e => e.Department.Name)
@@ -47,7 +47,7 @@ namespace AdvancedHRMS.Views
      .ToList();
 
 
-                // Get unique positions from actual employees
+              
                 _positions = _allEmployees
                     .Select(e => e.Position)
                     .Where(p => !string.IsNullOrEmpty(p))
@@ -55,7 +55,7 @@ namespace AdvancedHRMS.Views
                     .OrderBy(p => p)
                     .ToList();
 
-                // Reinitialize filters with updated data
+               
                 InitializeFilters();
             }
             catch (Exception ex)
@@ -67,7 +67,7 @@ namespace AdvancedHRMS.Views
 
         private void InitializeFilters()
         {
-            // Initialize with "All" option first
+        
             var allDepartments = new List<string> { "All Departments" };
             allDepartments.AddRange(_departments);
 
@@ -77,7 +77,6 @@ namespace AdvancedHRMS.Views
             DepartmentFilter.ItemsSource = allDepartments;
             PositionFilter.ItemsSource = allPositions;
 
-            // Select "All" by default
             DepartmentFilter.SelectedIndex = 0;
             PositionFilter.SelectedIndex = 0;
         }
@@ -86,7 +85,7 @@ namespace AdvancedHRMS.Views
         {
             var filtered = _allEmployees.AsQueryable();
 
-            // Apply search filter
+          
             if (!string.IsNullOrWhiteSpace(SearchTextBox.Text))
             {
                 filtered = filtered.Where(e =>
@@ -95,14 +94,14 @@ namespace AdvancedHRMS.Views
                     e.EmployeeId.ToString().Contains(SearchTextBox.Text));
             }
 
-            // Apply department filter (skip if "All Departments" is selected)
+         
             if (DepartmentFilter.SelectedIndex > 0)
             {
                 filtered = filtered.Where(e => e.Department != null && e.Department.Name == DepartmentFilter.SelectedItem.ToString());
 
             }
 
-            // Apply position filter (skip if "All Positions" is selected)
+      
             if (PositionFilter.SelectedIndex > 0)
             {
                 filtered = filtered.Where(e => e.Position == PositionFilter.SelectedItem.ToString());

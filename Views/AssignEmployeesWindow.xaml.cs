@@ -19,7 +19,6 @@ namespace AdvancedHRMS.Views
             _context = new ApplicationDbContext();
 
 
-            // With this:
             _department = _context.Departments
                 .Include(d => d.Employees)
                 .FirstOrDefault(d => d.DepartmentId == department.DepartmentId);
@@ -29,7 +28,7 @@ namespace AdvancedHRMS.Views
 
         private void LoadEmployees()
         {
-            var allEmployees = _context.Employees.ToList(); // Fetch all
+            var allEmployees = _context.Employees.ToList(); 
             var departmentEmployeeIds = _department.Employees?.Select(emp => emp.EmployeeId).ToList() ?? new List<int>();
 
             _employees = allEmployees
@@ -50,7 +49,7 @@ namespace AdvancedHRMS.Views
         {
             var selectedIds = _employees.Where(e => e.IsSelected).Select(e => e.EmployeeId).ToList();
 
-            // Unassign all employees from this department
+            
             var existingEmployees = _context.Employees
                 .Where(e => e.DepartmentId == _department.DepartmentId)
                 .ToList();
@@ -60,7 +59,7 @@ namespace AdvancedHRMS.Views
                 emp.DepartmentId = null;
             }
 
-            // Assign selected employees to this department
+          
             var selectedEmployees = _context.Employees
                 .Where(e => selectedIds.Contains(e.EmployeeId))
                 .ToList();
@@ -92,7 +91,7 @@ namespace AdvancedHRMS.Views
         }
     }
 
-    // Helper class for checkbox binding
+
     public class EmployeeSelectable
     {
         public bool IsSelected { get; set; }

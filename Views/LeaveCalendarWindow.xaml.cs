@@ -16,9 +16,7 @@ using System.Windows.Shapes;
 
 namespace AdvancedHRMS.Views
 {
-    /// <summary>
-    /// Interaction logic for LeaveCalendarWindow.xaml
-    /// </summary>
+ 
     public partial class LeaveCalendarWindow : Window
     {
         public LeaveCalendarWindow()
@@ -39,7 +37,7 @@ namespace AdvancedHRMS.Views
             {
                 for (var date = leave.StartDate; date <= leave.EndDate; date = date.AddDays(1))
                 {
-                    // Highlight calendar days
+                   
                 }
             }
         }

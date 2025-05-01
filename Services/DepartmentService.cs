@@ -52,12 +52,11 @@ namespace AdvancedHRMS.Services
                 bool nameChanged = existingDept.Name != department.Name;
                 context.Entry(existingDept).CurrentValues.SetValues(department);
 
-                // Update manager
                 existingDept.Manager = department.ManagerId.HasValue
                     ? await context.Employees.FindAsync(department.ManagerId.Value)
                     : null;
 
-                // Update employee departments if name changed
+             
                 if (nameChanged)
                 {
                     foreach (var employee in existingDept.Employees)

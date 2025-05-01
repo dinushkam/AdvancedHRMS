@@ -19,14 +19,14 @@ namespace AdvancedHRMS.Views
             set
             {
                 _statusMessage = value;
-                // Implement INotifyPropertyChanged if needed
+              
             }
         }
 
         public EmployeeDocumentsView()
         {
             InitializeComponent();
-            LoadSampleDocuments(); // Replace with actual data loading
+            LoadSampleDocuments(); 
             DocumentsGrid.ItemsSource = Documents;
         }
 
@@ -51,7 +51,7 @@ namespace AdvancedHRMS.Views
             {
                 try
                 {
-                    // In a real app: Save to database/server and update list
+
                     var fileInfo = new FileInfo(openFileDialog.FileName);
                     Documents.Add(new EmployeeDocument
                     {
@@ -83,7 +83,7 @@ namespace AdvancedHRMS.Views
 
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    // In a real app: Retrieve file from database/server
+                   
                     StatusMessage = $"Downloading {selectedDoc.Name}...";
                     MessageBox.Show($"In a real app, this would download {selectedDoc.Name}", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -98,7 +98,6 @@ namespace AdvancedHRMS.Views
         {
             if (DocumentsGrid.SelectedItem is EmployeeDocument selectedDoc)
             {
-                // In a real app: Open document viewer
                 MessageBox.Show($"Would open {selectedDoc.Name} in viewer", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }

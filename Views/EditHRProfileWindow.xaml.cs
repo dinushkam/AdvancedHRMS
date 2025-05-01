@@ -38,7 +38,7 @@ namespace AdvancedHRMS.Views
                 var userToUpdate = _context.Users.FirstOrDefault(u => u.Id == CurrentUser.Id);
                 if (userToUpdate != null)
                 {
-                    // Update editable fields
+                    
                     userToUpdate.FullName = CurrentUser.FullName;
                     userToUpdate.Email = CurrentUser.Email;
                     userToUpdate.Department = CurrentUser.Department;

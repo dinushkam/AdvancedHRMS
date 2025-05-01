@@ -12,7 +12,7 @@ namespace AdvancedHRMS.Views
             InitializeComponent();
             Employee = employee ?? throw new ArgumentNullException(nameof(employee));
 
-            // Create a deep copy to avoid direct modification
+ 
             Employee = new Employee
             {
                 EmployeeId = employee.EmployeeId,
