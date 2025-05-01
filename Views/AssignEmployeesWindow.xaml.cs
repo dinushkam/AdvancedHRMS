@@ -17,7 +17,7 @@ namespace AdvancedHRMS.Views
         {
             InitializeComponent();
             _context = new ApplicationDbContext();
-           
+
 
             // With this:
             _department = _context.Departments
